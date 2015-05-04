@@ -33,7 +33,7 @@ efficient for multiple plots on the same map domain.
 
   from polarmap import PolarMap
 
-  pmap = polarmap.PolarMap(-10, 30, 54, 72, 'coast.npy',
+  pmap = PolarMap(-10, 30, 54, 72, 'coast.npy',
                            facecolor='LightBlue')
   pmap.fillcontinents(facecolor='green', edgecolor='black')
   pmap.drawparallels([55, 60, 65, 70])
