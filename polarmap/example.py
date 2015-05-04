@@ -8,18 +8,16 @@
 import matplotlib.pyplot as plt
 import polarmap
 
-# Determine geographical extent
+# Define geographical extent
 lon0, lon1 = -10, 30       # Longitude range
 lat0, lat1 =  54, 72       # Latitude range
 
-pmap = polarmap.PolarMap(lon0, lon1, lat0, lat1, 'coast.npy')
-pmap.init_axis(color='LightBlue')
+pmap = polarmap.PolarMap(lon0, lon1, lat0, lat1, 'coast.npy',
+                         facecolor='LightBlue')
 
-#pmap.drawcoastlines()
 pmap.fillcontinents(facecolor='green', edgecolor='black')
 
-pmap.drawparallels()
-pmap.drawmeridians()
-
+pmap.drawparallels([55, 60, 65, 70])
+pmap.drawmeridians([-10, 0, 10, 20, 30])
 
 plt.show()
