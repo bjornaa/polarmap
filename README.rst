@@ -37,6 +37,7 @@ Files
   An example script using `PolarMap` to produce the plot at the top of
   the page.
 
+The module and the scripts works unchanged with both python2 and python3.
 
 
 Example use

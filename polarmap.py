@@ -140,7 +140,7 @@ class PolarMap(object):
     def fillcontinents(self, **kwargs):
         """Fill land"""
         
-        myfill = partial(plt.fill, color='0.8')
+        myfill = partial(plt.fill, facecolor='0.8', edgecolor='black')
         for p in self.coast_polygons:
             x, y = self(p[0], p[1])
             h = myfill(x, y, **kwargs)

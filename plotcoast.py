@@ -33,8 +33,4 @@ except IOError:
 for p in polys:
     plt.fill(p[0], p[1], color='green')
 
-# Make background = sea blue
-ax = plt.gca()
-ax.set_axis_bgcolor('blue')
-
 plt.show()
