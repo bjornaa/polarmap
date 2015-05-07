@@ -23,6 +23,7 @@ import matplotlib.pyplot as plt
 # Radian factor
 rad = np.pi / 180.0
 
+
 class PolarMap(object):
     """Polar stereographic map from South pole onto equator"""
 
@@ -32,7 +33,6 @@ class PolarMap(object):
         self.lon1 = lon1
         self.lat0 = lat0
         self.lat1 = lat1
-        #self.coastfile = coastfile
 
         if vlon is None:
             self.vlon = 0.5*(lon0 + lon1)
@@ -74,7 +74,7 @@ class PolarMap(object):
 
     def __call__(self, lon, lat):
         """Call the instance to project from lon/lat"""
-        
+
         lon = np.asarray(lon)
         lat = np.asarray(lat)
         m =  np.tan((45.0-0.5*lat)*rad)    # Stereographic
@@ -84,7 +84,7 @@ class PolarMap(object):
 
     def drawparallels(self, parallels, **kwargs):
         """Draw and label parallels"""
-        
+
         labelsep = 0.003
         myplot = partial(plt.plot, color='black', linestyle=':')
         lon = np.linspace(self.lon0, self.lon1, 100)
@@ -130,7 +130,7 @@ class PolarMap(object):
 
     def drawcoastlines(self, **kwargs):
         """Draw the coast line"""
-        
+
         myplot = partial(plt.plot, color='black')
         for p in self.coast_polygons:
             x, y = self(p[0], p[1])
@@ -139,7 +139,7 @@ class PolarMap(object):
 
     def fillcontinents(self, **kwargs):
         """Fill land"""
-        
+
         myfill = partial(plt.fill, facecolor='0.8', edgecolor='black')
         for p in self.coast_polygons:
             x, y = self(p[0], p[1])
