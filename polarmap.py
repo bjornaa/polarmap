@@ -15,14 +15,22 @@
 # Imports
 # ---------------
 
+from __future__ import unicode_literals
+
 from functools import partial
 
 import numpy as np
 import matplotlib.pyplot as plt
 
+# --- Constants ---
+
 # Radian factor
 rad = np.pi / 180.0
 
+# unicode degree symbol
+degree = '\u00B0'   
+
+# --- Classes ---
 
 class PolarMap(object):
     """Polar stereographic map from South pole onto equator"""
@@ -100,7 +108,13 @@ class PolarMap(object):
             x0, y0 = self(self.lon0, lat)
             x1 = x0 - labelsep * cosa
             y1 = y0 - labelsep * sina
-            t = plt.text(x1, y1, str(lat),
+            if lat > 0:
+                label = "{}{}N".format(lat, degree)
+            elif lat < 0:
+                label = "{}{}S".format(-lat, degree)
+            else:
+                label = "0"+degree
+            t = plt.text(x1, y1, label,
                      rotation = label_angle,
                      rotation_mode = 'anchor',
                      horizontalalignment='right',
@@ -122,7 +136,13 @@ class PolarMap(object):
             x0, y0 = self(lon, self.lat0)
             x1 = x0 + labelsep*sina
             y1 = y0 - labelsep*cosa
-            plt.text(x1, y1, str(lon),
+            if lon > 0:
+                label = "{}{}E".format(lon, degree)
+            elif lon < 0:
+                label = "{}{}W".format(-lon, degree)
+            else:
+                label = "0"+degree
+            plt.text(x1, y1, label,
                      rotation = angle,
                      rotation_mode = 'anchor',
                      horizontalalignment='center',

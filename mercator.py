@@ -15,6 +15,8 @@
 # Imports
 # ---------------
 
+from __future__ import unicode_literals
+
 from functools import partial
 
 import numpy as np
@@ -23,6 +25,10 @@ import matplotlib.pyplot as plt
 # Radian factor
 rad = np.pi / 180.0
 deg = 180.0 / np.pi
+
+# unicode degree symbol
+degree = '\u00B0'   
+
 
 def merc(lat):
     return deg * np.log(np.tan((45 + 0.5*lat)*rad))
@@ -67,21 +73,38 @@ class MercatorMap(object):
     def drawparallels(self, parallels, **kwargs):
         """Draw and label parallels"""
         myplot = partial(plt.plot, color='black', linestyle=':')
+        labels = []
         for lat in parallels:
             x, y = self([self.lon0, self.lon1], [lat, lat])
             myplot(x, y, **kwargs)
-        # Labels
-        plt.yticks([merc(lat) for lat in parallels],  parallels)
+            # Labels
+            if lat > 0:
+                label = "{}{}N".format(lat, degree)
+            elif lat < 0:
+                label = "{}{}S".format(-lat, degree)
+            else:
+                label = "0"+degree
+            labels.append(label)
+
+        plt.yticks([merc(lat) for lat in parallels],  labels)
 
     def drawmeridians(self, meridians, **kwargs):
         """Draw and label meridians"""
         myplot = partial(plt.plot, color='black', linestyle=':')
+        labels = []
         for lon in meridians:
             # Plot meridians
             x, y = self([lon, lon], [self.lat0, self.lat1])
             myplot(x, y, **kwargs)
-        # Labels
-        plt.xticks(meridians)
+            if lon > 0:
+                label = "{}{}E".format(lon, degree)
+            elif lon < 0:
+                label = "{}{}W".format(-lon, degree)
+            else:
+                label = "0"+degree
+            labels.append(label)
+
+        plt.xticks(meridians, labels)
             
 
     def drawcoastlines(self, **kwargs):
