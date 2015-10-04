@@ -10,6 +10,7 @@
 # TODO:
 # Better documentation
 # Control over tickmark lengths
+# Inherit from a superclass
 
 # ---------------
 # Imports
@@ -27,12 +28,11 @@ rad = np.pi / 180.0
 deg = 180.0 / np.pi
 
 # unicode degree symbol
-degree = '\u00B0'   
+degree = '\u00B0'
 
 
 def merc(lat):
     return deg * np.log(np.tan((45 + 0.5*lat)*rad))
-    
 
 
 class MercatorMap(object):
@@ -44,7 +44,7 @@ class MercatorMap(object):
         self.lon1 = lon1
         self.lat0 = lat0
         self.lat1 = lat1
-        
+
         # Coast line
         self.coast_polygons = np.load(coastfile)
 
@@ -60,7 +60,7 @@ class MercatorMap(object):
         # Turn off ordinary ticks and labels
         plt.xticks([])
         plt.yticks([])
-        
+
     def __call__(self, lon, lat):
         """Call the instance to project from lon/lat"""
 
@@ -105,7 +105,6 @@ class MercatorMap(object):
             labels.append(label)
 
         plt.xticks(meridians, labels)
-            
 
     def drawcoastlines(self, **kwargs):
         """Draw the coast line"""
@@ -113,7 +112,7 @@ class MercatorMap(object):
         myplot = partial(plt.plot, color='black')
         for p in self.coast_polygons:
             x, y = self(p[0], p[1])
-            myplot(x, y, *args, **kwargs)
+            myplot(x, y, **kwargs)
 
     def fillcontinents(self, **kwargs):
         """Fill land"""
@@ -128,23 +127,25 @@ class MercatorMap(object):
     def contourf(self, lon, lat, data, *args, **kwargs):
         x, y = self(lon, lat)
         h = plt.contourf(x, y, data, *args, **kwargs)
-        #for q in h.collections:
+        # for q in h.collections:
         #    q.set_clip_path(self.clip_path)
         return h
 
     def contour(self, lon, lat, data, *args, **kwargs):
         x, y = self(lon, lat)
         h = plt.contour(x, y, data, *args, **kwargs)
-        #for q in h.collections:
+        # for q in h.collections:
         #    q.set_clip_path(self.clip_path)
         return h
 
     def plot(self, lon, lat, *args, **kwargs):
         x, y = self(lon, lat)
         h = plt.plot(x, y, *args, **kwargs)
-        #h[0].set_clip_path(self.clip_path)
+        # h[0].set_clip_path(self.clip_path)
+        return h
 
     def fill(self, lon, lat, *args, **kwargs):
         x, y = self(lon, lat)
         h = plt.fill(x, y, *args, **kwargs)
-        #h[0].set_clip_path(self.clip_path)
+        # h[0].set_clip_path(self.clip_path)
+        return h

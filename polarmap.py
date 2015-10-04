@@ -10,6 +10,8 @@
 # TODO:
 # Better documentation
 # Control over tickmark lengths
+# WGS ellipsoid
+# Inherit from a common class with Mercator
 
 # ---------------
 # Imports
@@ -81,15 +83,8 @@ class PolarMap(object):
         plt.axis(self.axis_limits)
         plt.axis('image')
 
-    def _xy2ll(self, x, y):
-        x = np.asarray(x)
-        y = np.asarray(y)
-        m = np.sqrt(x*x + y*y)
-        lon = self.vlon + np.arctan2(x, -y)/rad
-        lat = 90.0 - 2*np.arctan(m)/rad
-        return lon, lat
-
     def _ll2xy(self, lon, lat):
+        """Forward projection"""
         lon = np.asarray(lon)
         lat = np.asarray(lat)
         m = np.tan((45.0-0.5*lat)*rad)    # Stereographic
@@ -97,16 +92,26 @@ class PolarMap(object):
         y = -m*np.cos((lon-self.vlon)*rad)
         return x, y
 
+    def _xy2ll(self, x, y):
+        """Inverse projection"""
+        x = np.asarray(x)
+        y = np.asarray(y)
+        m = np.sqrt(x*x + y*y)
+        lon = self.vlon + np.arctan2(x, -y)/rad
+        lat = 90.0 - 2*np.arctan(m)/rad
+        return lon, lat
+
     # Put lon/lat at bottom left corner
     def _format_coord(self, x, y):
         lon, lat = self._xy2ll(x, y)
         if self.lon0 <= lon <= self.lon1 and self.lat0 <= lat <= self.lat1:
-            return "lon={:11.6f} lat={:10.6f}".format(lon, lat)
+            return "lon={:11.6f}{} lat={:10.6f}{}".format(
+                    lon, degree, lat, degree)
         else:
             return ""
 
     def __call__(self, lon, lat, inverse=False):
-        """Call the instance to project from lon/lat"""
+        """Provide projection by calling the instance"""
         if inverse:
             return self._xy2ll(lon, lat)  # lon, lat is x, y in this case
         else:

@@ -43,7 +43,7 @@ level_labels = ['0'] + [str(v) for v in levels[1:]]  # Use '0' instead of '1'
 with Dataset(topo_file) as fid:
     lon = fid.variables['lon'][:]
     lat = fid.variables['lat'][:]
-    topo = fid.variables['topo'][:,:]
+    topo = fid.variables['topo'][:, :]
 llon, llat = np.meshgrid(lon, lat)
 
 # Depth is positive and only defined at sea

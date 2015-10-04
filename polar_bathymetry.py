@@ -43,7 +43,7 @@ level_labels = ['0'] + [str(v) for v in levels[1:]]  # Use '0' instead of '1'
 with Dataset(topo_file) as fid:
     lon = fid.variables['lon'][:]
     lat = fid.variables['lat'][:]
-    topo = fid.variables['topo'][:,:]
+    topo = fid.variables['topo'][:, :]
 llon, llat = np.meshgrid(lon, lat)
 
 # Depth is positive and only defined at sea
@@ -65,6 +65,7 @@ plt.colorbar(ticks=loglevels,
              shrink=0.8)
 
 # Put a yellow colour on land with a black coast line
+# BUG: No color on UK and Ireland???
 pmap.fillcontinents(facecolor=(0.8, 0.8, 0.2), edgecolor='black')
 
 # Draw graticule

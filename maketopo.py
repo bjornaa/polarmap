@@ -13,20 +13,18 @@ from __future__ import division
 
 import numpy as np
 from netCDF4 import Dataset
-import matplotlib.pyplot as plt
 
 # Determine geographical extent
 lon0, lon1 = -12, 50       # Longitude range
 lat0, lat1 =  50, 80       # Latitude range
 
-# URL of OPeNDAP server 
+# URL of OPeNDAP server
 url = 'http://ferret.pmel.noaa.gov/thredds/dodsC/data/PMEL/etopo5.nc'
 
 # Read in etopo5 topography/bathymetry.
 etopo5 = Dataset(url)
 
 step = 5 / 60  # 5 minutes
-
 
 # Lats from -90 to +90 (including) in 5 degree steps
 j0 = int(round((lat0 + 90) / step))
@@ -49,39 +47,29 @@ if lon0*lon1 >= 0:
 
 else:
     # Read western and eastern hemisphere separately
-    lon0 = etopo5.variables['ETOPO05_X'][i0:-1] - 360  
+    lon0 = etopo5.variables['ETOPO05_X'][i0:-1] - 360
     lon1 = etopo5.variables['ETOPO05_X'][0:i1+1]
     topo0 = etopo5.variables['ROSE'][j0:j1+1, i0:-1]
     topo1 = etopo5.variables['ROSE'][j0:j1+1, 0:i1+1]
     lon = np.concatenate((lon0, lon1))
     topo = np.concatenate((topo0, topo1), axis=1)
 
-f = Dataset('topo.nc', mode='w', format='NETCDF3_CLASSIC')
-# Dimensions
-f.createDimension('lon', len(lon))
-f.createDimension('lat', len(lat))
-# Variables
-v = f.createVariable('lon', 'f', ('lon',))
-v.standard_name = 'longitude'
-v.units = "degree_east"
-v = f.createVariable('lat', 'f', ('lat',))
-v.standard_name = 'latitude'
-v.units = "degree_north"
-v = f.createVariable('topo', 'f', ('lat', 'lon'))
-v.long_name = 'topography'
-v.standard_name = 'altitude' 
-v.units = "m"
-# Data
-f.variables['lon'][:] = lon
-f.variables['lat'][:] = lat
-f.variables['topo'][:,:] = topo
-f.close()
-
-
-# Test
-#plt.contourf(lon, lat, topo)
-#plt.colorbar()
-#plt.show()
-
-
-
+with Dataset('topo.nc', mode='w', format='NETCDF3_CLASSIC') as f:
+    # Dimensions
+    f.createDimension('lon', len(lon))
+    f.createDimension('lat', len(lat))
+    # Variables
+    v = f.createVariable('lon', 'f', ('lon',))
+    v.standard_name = 'longitude'
+    v.units = "degree_east"
+    v = f.createVariable('lat', 'f', ('lat',))
+    v.standard_name = 'latitude'
+    v.units = "degree_north"
+    v = f.createVariable('topo', 'f', ('lat', 'lon'))
+    v.long_name = 'topography'
+    v.standard_name = 'altitude'
+    v.units = "m"
+    # Data
+    f.variables['lon'][:] = lon
+    f.variables['lat'][:] = lat
+    f.variables['topo'][:, :] = topo
