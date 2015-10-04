@@ -28,10 +28,10 @@ import matplotlib.pyplot as plt
 rad = np.pi / 180.0
 
 # unicode degree symbol
-degree = '\u00B0'   
+degree = '\u00B0'
+
 
 # --- Classes ---
-
 class PolarMap(object):
     """Polar stereographic map from South pole onto equator"""
 
@@ -73,22 +73,44 @@ class PolarMap(object):
         self.axis_limits = plt.axis()
 
         # Hide the standard matplotlib axes
-        a = plt.gca()
-        a.set_axis_bgcolor(plt.gcf().get_facecolor())
-        a.set_axis_off()
+        self.axes = plt.gca()
+        self.axes.set_axis_bgcolor(plt.gcf().get_facecolor())
+        self.axes.set_axis_off()
+        self.axes.format_coord = self._format_coord
 
         plt.axis(self.axis_limits)
         plt.axis('image')
 
-    def __call__(self, lon, lat):
-        """Call the instance to project from lon/lat"""
+    def _xy2ll(self, x, y):
+        x = np.asarray(x)
+        y = np.asarray(y)
+        m = np.sqrt(x*x + y*y)
+        lon = self.vlon + np.arctan2(x, -y)/rad
+        lat = 90.0 - 2*np.arctan(m)/rad
+        return lon, lat
 
+    def _ll2xy(self, lon, lat):
         lon = np.asarray(lon)
         lat = np.asarray(lat)
-        m =  np.tan((45.0-0.5*lat)*rad)    # Stereographic
-        x =  m*np.sin((lon-self.vlon)*rad)
+        m = np.tan((45.0-0.5*lat)*rad)    # Stereographic
+        x = m*np.sin((lon-self.vlon)*rad)
         y = -m*np.cos((lon-self.vlon)*rad)
         return x, y
+
+    # Put lon/lat at bottom left corner
+    def _format_coord(self, x, y):
+        lon, lat = self._xy2ll(x, y)
+        if self.lon0 <= lon <= self.lon1 and self.lat0 <= lat <= self.lat1:
+            return "lon={:11.6f} lat={:10.6f}".format(lon, lat)
+        else:
+            return ""
+
+    def __call__(self, lon, lat, inverse=False):
+        """Call the instance to project from lon/lat"""
+        if inverse:
+            return self._xy2ll(lon, lat)  # lon, lat is x, y in this case
+        else:
+            return self._ll2xy(lon, lat)
 
     def drawparallels(self, parallels, **kwargs):
         """Draw and label parallels"""
@@ -114,9 +136,9 @@ class PolarMap(object):
                 label = "{}{}S".format(-lat, degree)
             else:
                 label = "0"+degree
-            t = plt.text(x1, y1, label,
-                     rotation = label_angle,
-                     rotation_mode = 'anchor',
+            plt.text(x1, y1, label,
+                     rotation=label_angle,
+                     rotation_mode='anchor',
                      horizontalalignment='right',
                      verticalalignment='center')
 
@@ -143,8 +165,8 @@ class PolarMap(object):
             else:
                 label = "0"+degree
             plt.text(x1, y1, label,
-                     rotation = angle,
-                     rotation_mode = 'anchor',
+                     rotation=angle,
+                     rotation_mode='anchor',
                      horizontalalignment='center',
                      verticalalignment='top')
 
@@ -154,8 +176,9 @@ class PolarMap(object):
         myplot = partial(plt.plot, color='black')
         for p in self.coast_polygons:
             x, y = self(p[0], p[1])
-            h = myplot(x, y, *args, **kwargs)
+            h = myplot(x, y, **kwargs)
             h[0].set_clip_path(self.clip_path)
+            return h
 
     def fillcontinents(self, **kwargs):
         """Fill land"""
@@ -165,6 +188,7 @@ class PolarMap(object):
             x, y = self(p[0], p[1])
             h = myfill(x, y, **kwargs)
             h[0].set_clip_path(self.clip_path)
+            return h
 
     # Wrap some plotting methods
 
@@ -186,8 +210,10 @@ class PolarMap(object):
         x, y = self(lon, lat)
         h = plt.plot(x, y, *args, **kwargs)
         h[0].set_clip_path(self.clip_path)
+        return h
 
     def fill(self, lon, lat, *args, **kwargs):
         x, y = self(lon, lat)
         h = plt.fill(x, y, *args, **kwargs)
         h[0].set_clip_path(self.clip_path)
+        return h
