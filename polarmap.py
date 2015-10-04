@@ -10,8 +10,6 @@
 # TODO:
 # Better documentation
 # Control over tickmark lengths
-# WGS ellipsoid
-# Inherit from a common class with Mercator
 
 # ---------------
 # Imports
@@ -32,8 +30,9 @@ rad = np.pi / 180.0
 # unicode degree symbol
 degree = '\u00B0'
 
-
 # --- Classes ---
+
+
 class PolarMap(object):
     """Polar stereographic map from South pole onto equator"""
 
@@ -75,10 +74,11 @@ class PolarMap(object):
         self.axis_limits = plt.axis()
 
         # Hide the standard matplotlib axes
-        self.axes = plt.gca()
-        self.axes.set_axis_bgcolor(plt.gcf().get_facecolor())
-        self.axes.set_axis_off()
-        self.axes.format_coord = self._format_coord
+        ax = plt.gca()
+        ax.set_axis_bgcolor(plt.gcf().get_facecolor())
+        ax.set_axis_off()
+        # Control the coordinate display
+        ax.format_coord = self._format_coord
 
         plt.axis(self.axis_limits)
         plt.axis('image')
@@ -101,8 +101,8 @@ class PolarMap(object):
         lat = 90.0 - 2*np.arctan(m)/rad
         return lon, lat
 
-    # Put lon/lat at bottom left corner
     def _format_coord(self, x, y):
+        """Format coordinate string with lon/lat"""
         lon, lat = self._xy2ll(x, y)
         if self.lon0 <= lon <= self.lon1 and self.lat0 <= lat <= self.lat1:
             return "lon={:11.6f}{} lat={:10.6f}{}".format(
@@ -183,17 +183,16 @@ class PolarMap(object):
             x, y = self(p[0], p[1])
             h = myplot(x, y, **kwargs)
             h[0].set_clip_path(self.clip_path)
-            return h
+        return h
 
     def fillcontinents(self, **kwargs):
         """Fill land"""
-
         myfill = partial(plt.fill, facecolor='0.8', edgecolor='black')
         for p in self.coast_polygons:
             x, y = self(p[0], p[1])
             h = myfill(x, y, **kwargs)
             h[0].set_clip_path(self.clip_path)
-            return h
+        return h
 
     # Wrap some plotting methods
 

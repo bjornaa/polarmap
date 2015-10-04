@@ -8,8 +8,6 @@
 import matplotlib.pyplot as plt
 import polarmap
 
-# UK and Ireland missing here as well
-
 # Define geographical extent
 lon0, lon1 = -10, 30       # Longitude range
 lat0, lat1 =  54, 72       # Latitude range

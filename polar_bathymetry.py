@@ -65,7 +65,6 @@ plt.colorbar(ticks=loglevels,
              shrink=0.8)
 
 # Put a yellow colour on land with a black coast line
-# BUG: No color on UK and Ireland???
 pmap.fillcontinents(facecolor=(0.8, 0.8, 0.2), edgecolor='black')
 
 # Draw graticule
