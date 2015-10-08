@@ -22,7 +22,7 @@ from polarmap import PolarMap
 
 # Define geographical extent
 lon0, lon1 = -10, 30       # Longitude range
-lat0, lat1 =  54, 72       # Latitude range
+lat0, lat1 = 54, 72        # Latitude range
 
 lons = range(-10, 31, 10)
 lats = range(55, 71, 5)

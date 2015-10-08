@@ -84,16 +84,16 @@ class PolarMap(object):
         plt.axis('image')
 
     def _ll2xy(self, lon, lat):
-        """Forward projection"""
+        """Forward stereographic projection on spherical earth"""
         lon = np.asarray(lon)
         lat = np.asarray(lat)
-        m = np.tan((45.0-0.5*lat)*rad)    # Stereographic
+        m = np.tan((45.0-0.5*lat)*rad)
         x = m*np.sin((lon-self.vlon)*rad)
         y = -m*np.cos((lon-self.vlon)*rad)
         return x, y
 
     def _xy2ll(self, x, y):
-        """Inverse projection"""
+        """Inverse stereographic projection on a spherical earth"""
         x = np.asarray(x)
         y = np.asarray(y)
         m = np.sqrt(x*x + y*y)
@@ -117,10 +117,11 @@ class PolarMap(object):
         else:
             return self._ll2xy(lon, lat)
 
-    def drawparallels(self, parallels, **kwargs):
+    def drawparallels(self, parallels, labelsep=1.0, **kwargs):
         """Draw and label parallels"""
-
-        labelsep = 0.003
+        xmin = self._ll2xy(self.lon0, self.lat0)[0]
+        xmax = self._ll2xy(self.lon1, self.lat0)[0]
+        labelsep = 0.015 * (xmax-xmin) * labelsep
         myplot = partial(plt.plot, color='black', linestyle=':')
         lon = np.linspace(self.lon0, self.lon1, 100)
 
@@ -147,10 +148,12 @@ class PolarMap(object):
                      horizontalalignment='right',
                      verticalalignment='center')
 
-    def drawmeridians(self, meridians, **kwargs):
+    def drawmeridians(self, meridians, labelsep=1.0, **kwargs):
         """Draw and label meridians"""
+        ymin = self(self.vlon, self.lat0)[1]
+        ymax = self(self.vlon, self.lat1)[1]
+        labelsep = 0.02 * (ymax-ymin) * labelsep
         myplot = partial(plt.plot, color='black', linestyle=':')
-        labelsep = 0.003
         for lon in meridians:
             # Plot meridians
             x, y = self([lon, lon], [self.lat0, self.lat1])
