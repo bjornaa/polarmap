@@ -106,7 +106,7 @@ class PolarMap(object):
         lon, lat = self._xy2ll(x, y)
         if self.lon0 <= lon <= self.lon1 and self.lat0 <= lat <= self.lat1:
             return "lon={:11.6f}{} lat={:10.6f}{}".format(
-                    lon, degree, lat, degree)
+                lon, degree, lat, degree)
         else:
             return ""
 

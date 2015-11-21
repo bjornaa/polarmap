@@ -8,7 +8,7 @@ The standard map plotting package for python+matplotlib is `basemap
 <http://matplotlib.org/basemap>`_. This is a flexible package with a
 lot of map projections. However, it seems like basemap can not produce
 non-rectangular regional polar stereographic maps like Matlab's
-`m-map <http://www.eos.ubc.ca/~rich/map.htm>`_ 
+`m-map <http://www.eos.ubc.ca/~rich/map.htm>`_
 or the `Generic Mapping Tools (GMT) <http://gmt.soest.hawaii.edu>`_.
 
 This map type is useful for relatively high latitudes where
@@ -24,7 +24,7 @@ Files
 -----
 
 ``makecoast.py``
-  A script for producing a coast line file.
+  A script for producing a coast line file (using basemap).
 
 ``plotcoast.py``
   Quick and dirty script to check the output from ``makecoast.py``.
@@ -45,9 +45,9 @@ Example use
 
 First a coast line is needed. The makecoast script uses basemap for
 this task and saves it to a npy file. The coast line can be reused, using it
-efficient for multiple plots on the same map domain. Due to the curved
+efficiently for multiple plots on the same map domain. Due to the curved
 nature of the plot, it may be smart to make the coast file cover a
-slightly larger area shown in the plot
+slightly larger area shown in the plot.
 ::
 
   from polarmap import PolarMap
@@ -57,4 +57,3 @@ slightly larger area shown in the plot
   pmap.fillcontinents(facecolor='green', edgecolor='black')
   pmap.drawparallels([55, 60, 65, 70])
   pmap.drawmeridians([-10, 0, 10, 20, 30])
-
