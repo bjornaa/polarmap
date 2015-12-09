@@ -121,7 +121,7 @@ class PolarMap(object):
         """Draw and label parallels"""
         xmin = self._ll2xy(self.lon0, self.lat0)[0]
         xmax = self._ll2xy(self.lon1, self.lat0)[0]
-        labelsep = 0.015 * (xmax-xmin) * labelsep
+        labelsep *= 0.015 * (xmax - xmin)
         myplot = partial(plt.plot, color='black', linestyle=':')
         lon = np.linspace(self.lon0, self.lon1, 100)
 
@@ -152,7 +152,7 @@ class PolarMap(object):
         """Draw and label meridians"""
         ymin = self(self.vlon, self.lat0)[1]
         ymax = self(self.vlon, self.lat1)[1]
-        labelsep = 0.02 * (ymax-ymin) * labelsep
+        labelsep *= 0.02 * (ymax - ymin)
         myplot = partial(plt.plot, color='black', linestyle=':')
         for lon in meridians:
             # Plot meridians
@@ -181,6 +181,8 @@ class PolarMap(object):
     def drawcoastlines(self, **kwargs):
         """Draw the coast line"""
 
+        # Returns the last polygon, why do that ?
+        # Either all or none
         myplot = partial(plt.plot, color='black')
         for p in self.coast_polygons:
             x, y = self(p[0], p[1])

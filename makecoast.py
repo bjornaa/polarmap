@@ -74,7 +74,7 @@ def makecoast(lon0, lon1, lat0, lat1, GSHHSres, GSHHStypes, coastfile):
     # ------------------------------
 
     # Use the identity projection, x=lon, y=lat
-    # This is called the cylindrical equidistand projection
+    # This is called the cylindrical equidistant projection
     bmap = Basemap(projection='cyl',
                    llcrnrlon=lon0, llcrnrlat=lat0,
                    urcrnrlon=lon1, urcrnrlat=lat1,

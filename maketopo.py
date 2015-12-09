@@ -40,7 +40,7 @@ if lon0*lon1 >= 0:
     # Region does not cross zero meridian
     lon = etopo5.variables['ETOPO05_X'][i0:i1+1]
     west = (lon > 180)  # Western hemisphere
-    lon[west] = lon[west] - 360
+    lon[west] -= 360
     topo = etopo5.variables['ROSE'][j0:j1+1, i0:i1+1]
     # Undo masking of values = -1.0 at the coast
     topo = topo.data
