@@ -16,9 +16,7 @@
 # ---------------
 
 from __future__ import unicode_literals
-
 from functools import partial
-
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -29,6 +27,7 @@ rad = np.pi / 180.0
 
 # unicode degree symbol
 degree = '\u00B0'
+
 
 # --- Classes ---
 
@@ -44,7 +43,7 @@ class PolarMap(object):
         self.lat1 = lat1
 
         if vlon is None:
-            self.vlon = 0.5*(lon0 + lon1)
+            self.vlon = 0.5 * (lon0 + lon1)
         else:
             self.vlon = vlon
 
@@ -52,8 +51,8 @@ class PolarMap(object):
         lon_bry = np.concatenate((np.linspace(lon0, lon1, 50),
                                   np.linspace(lon1, lon0, 50),
                                   [lon0]))
-        lat_bry = np.concatenate((lat0+np.zeros((50,)),
-                                  lat1+np.zeros((50,)),
+        lat_bry = np.concatenate((lat0 + np.zeros((50,)),
+                                  lat1 + np.zeros((50,)),
                                   [lat0]))
         self.xbry, self.ybry = self(lon_bry, lat_bry)
 
@@ -87,18 +86,18 @@ class PolarMap(object):
         """Forward stereographic projection on spherical earth"""
         lon = np.asarray(lon)
         lat = np.asarray(lat)
-        m = np.tan((45.0-0.5*lat)*rad)
-        x = m*np.sin((lon-self.vlon)*rad)
-        y = -m*np.cos((lon-self.vlon)*rad)
+        m = np.tan((45.0 - 0.5 * lat) * rad)
+        x = m * np.sin((lon - self.vlon) * rad)
+        y = -m * np.cos((lon - self.vlon) * rad)
         return x, y
 
     def _xy2ll(self, x, y):
         """Inverse stereographic projection on a spherical earth"""
         x = np.asarray(x)
         y = np.asarray(y)
-        m = np.sqrt(x*x + y*y)
-        lon = self.vlon + np.arctan2(x, -y)/rad
-        lat = 90.0 - 2*np.arctan(m)/rad
+        m = np.sqrt(x * x + y * y)
+        lon = self.vlon + np.arctan2(x, -y) / rad
+        lat = 90.0 - 2 * np.arctan(m) / rad
         return lon, lat
 
     def _format_coord(self, x, y):
@@ -126,11 +125,11 @@ class PolarMap(object):
         lon = np.linspace(self.lon0, self.lon1, 100)
 
         label_angle = self.lon0 - self.vlon
-        cosa = np.cos(label_angle*rad)
-        sina = np.sin(label_angle*rad)
+        cosa = np.cos(label_angle * rad)
+        sina = np.sin(label_angle * rad)
 
         for lat in parallels:
-            x, y = self(lon, lat+np.zeros_like(lon))
+            x, y = self(lon, lat + np.zeros_like(lon))
             myplot(x, y, **kwargs)
             # Labels
             x0, y0 = self(self.lon0, lat)
@@ -141,7 +140,7 @@ class PolarMap(object):
             elif lat < 0:
                 label = "{}{}S".format(-lat, degree)
             else:
-                label = "0"+degree
+                label = "0" + degree
             plt.text(x1, y1, label,
                      rotation=label_angle,
                      rotation_mode='anchor',
@@ -160,18 +159,18 @@ class PolarMap(object):
             myplot(x, y, **kwargs)
 
             # Labels
-            angle = lon-self.vlon
-            cosa = np.cos(angle*rad)
-            sina = np.sin(angle*rad)
+            angle = lon - self.vlon
+            cosa = np.cos(angle * rad)
+            sina = np.sin(angle * rad)
             x0, y0 = self(lon, self.lat0)
-            x1 = x0 + labelsep*sina
-            y1 = y0 - labelsep*cosa
+            x1 = x0 + labelsep * sina
+            y1 = y0 - labelsep * cosa
             if lon > 0:
                 label = "{}{}E".format(lon, degree)
             elif lon < 0:
                 label = "{}{}W".format(-lon, degree)
             else:
-                label = "0"+degree
+                label = "0" + degree
             plt.text(x1, y1, label,
                      rotation=angle,
                      rotation_mode='anchor',
@@ -181,22 +180,24 @@ class PolarMap(object):
     def drawcoastlines(self, **kwargs):
         """Draw the coast line"""
 
-        # Returns the last polygon, why do that ?
-        # Either all or none
         myplot = partial(plt.plot, color='black')
+        h = []
         for p in self.coast_polygons:
             x, y = self(p[0], p[1])
-            h = myplot(x, y, **kwargs)
-            h[0].set_clip_path(self.clip_path)
+            h0, = myplot(x, y, **kwargs)
+            h0.set_clip_path(self.clip_path)
+            h.append(h0)
         return h
 
     def fillcontinents(self, **kwargs):
         """Fill land"""
         myfill = partial(plt.fill, facecolor='0.8', edgecolor='black')
+        h = []
         for p in self.coast_polygons:
             x, y = self(p[0], p[1])
-            h = myfill(x, y, **kwargs)
-            h[0].set_clip_path(self.clip_path)
+            h0, = myfill(x, y, **kwargs)
+            h0.set_clip_path(self.clip_path)
+            h.append(h0)
         return h
 
     # Wrap some plotting methods

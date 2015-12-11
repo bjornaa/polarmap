@@ -57,3 +57,4 @@ slightly larger area shown in the plot.
   pmap.fillcontinents(facecolor='green', edgecolor='black')
   pmap.drawparallels([55, 60, 65, 70])
   pmap.drawmeridians([-10, 0, 10, 20, 30])
+
